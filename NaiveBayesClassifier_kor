@@ -1,4 +1,4 @@
-﻿
+
 from nltk.classify import NaiveBayesClassifier
 import pandas as pd
 from konlpy.tag import Twitter
