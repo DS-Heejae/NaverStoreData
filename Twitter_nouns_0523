@@ -1,4 +1,4 @@
-# ¸í»ç ºóµµ¼ö Ã¼Å© (ÀÛ¼ºÁß)
+# ëª…ì‚¬ ë¹ˆë„ìˆ˜ ì²´í¬ (í…Œì´ë¸”ë¡œ ë°ì´í„° ì €ì¥)
 
 # -*- coding: utf-8 -*-
 
@@ -11,7 +11,7 @@ data = pd.read_csv("C:/untitled/living_data1.csv")
 
 nlp = Twitter()
 
-a = ['¸¸Á·', 'º¸Åë', 'ºÒ¸¸']
+a = ['ë§Œì¡±', 'ë³´í†µ', 'ë¶ˆë§Œ']
 
 for i in a:
     _data = data[data['prefer'] == str(i)]
@@ -28,20 +28,20 @@ for i in a:
     for k in count.items():
         a.append(k[0])
         b.append(k[1])
-    if i == '¸¸Á·':
-        df1 = pd.DataFrame({'¸¸Á·µµ':'¸¸Á·','´Ü¾î':a, 'ºóµµ¼ö':b})
-        df1 = df1[['¸¸Á·µµ','´Ü¾î','ºóµµ¼ö']]
-        df1 = df1.sort_values(by = 'ºóµµ¼ö', ascending=False)
-    elif i == 'º¸Åë':
-        df2 = pd.DataFrame({'¸¸Á·µµ':'º¸Åë','´Ü¾î':a, 'ºóµµ¼ö':b})
-        df2 = df2[['¸¸Á·µµ','´Ü¾î','ºóµµ¼ö']]
-        df2 = df2.sort_values(by = 'ºóµµ¼ö', ascending=False)
+    if i == 'ë§Œì¡±':
+        df1 = pd.DataFrame({'ë§Œì¡±ë„':'ë§Œì¡±','ë‹¨ì–´':a, 'ë¹ˆë„ìˆ˜':b})
+        df1 = df1[['ë§Œì¡±ë„','ë‹¨ì–´','ë¹ˆë„ìˆ˜']]
+        df1 = df1.sort_values(by = 'ë¹ˆë„ìˆ˜', ascending=False)
+    elif i == 'ë³´í†µ':
+        df2 = pd.DataFrame({'ë§Œì¡±ë„':'ë³´í†µ','ë‹¨ì–´':a, 'ë¹ˆë„ìˆ˜':b})
+        df2 = df2[['ë§Œì¡±ë„','ë‹¨ì–´','ë¹ˆë„ìˆ˜']]
+        df2 = df2.sort_values(by = 'ë¹ˆë„ìˆ˜', ascending=False)
     else:
-        df3 = pd.DataFrame({'¸¸Á·µµ':'ºÒ¸¸','´Ü¾î':a, 'ºóµµ¼ö':b})
-        df3 = df3[['¸¸Á·µµ','´Ü¾î','ºóµµ¼ö']]
-        df3 = df3.sort_values(by = 'ºóµµ¼ö', ascending=False)
+        df3 = pd.DataFrame({'ë§Œì¡±ë„':'ë¶ˆë§Œ','ë‹¨ì–´':a, 'ë¹ˆë„ìˆ˜':b})
+        df3 = df3[['ë§Œì¡±ë„','ë‹¨ì–´','ë¹ˆë„ìˆ˜']]
+        df3 = df3.sort_values(by = 'ë¹ˆë„ìˆ˜', ascending=False)
 
 data = pd.concat([df1,df2,df3])
-data = data.reset_index()[['¸¸Á·µµ','´Ü¾î','ºóµµ¼ö']]
+data = data.reset_index()[['ë§Œì¡±ë„','ë‹¨ì–´','ë¹ˆë„ìˆ˜']]
 
 data.to_csv('data_nouns2.csv', mode = 'w', index = True, encoding='utf-8', index_label= False)
