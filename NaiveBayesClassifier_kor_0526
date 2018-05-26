@@ -1,0 +1,133 @@
+
+from nltk.classify import NaiveBayesClassifier
+import pandas as pd
+from konlpy.tag import Twitter
+import re
+
+twitter = Twitter()
+
+# KOSAC사전에서 polarity.csv 파일을 불러온다
+df_dic = pd.read_csv("C:/naverstore/lexicon/mypolarity.csv", encoding='utf-8')
+
+df = df_dic[df_dic['max.value'].notnull()]
+df = df[['ngram','max.value']]
+
+# 가장 앞에있는 한글단어만 추출하는 정규 표현식
+p = r'^[가-힣]+'
+
+# KOSAC으로 부터 긍정, 부정, 중립의 사전을 생성한다
+pos_dic = []
+neg_dic = []
+neu_dic = []
+for i, row in df.iterrows():
+    if row['max.value'] ==  'POS':
+        pos_dic.extend(re.findall(p, row['ngram']))
+    elif row['max.value'] ==  'NEG':
+        neg_dic.extend(re.findall(p, row['ngram']))
+    elif row['max.value'] ==  'NEUT':
+        neu_dic.extend(re.findall(p, row['ngram']))
+
+def word_feats(words):
+    return dict((word, True) for word in words)
+
+# 중복 단어를 제거하기 위해서 set로 만들었다가 list로 변환시킨다
+positive_vocab = list(set(pos_dic))
+negative_vocab = list(set(neg_dic))
+neutral_vocab = list(set(neu_dic))
+
+# 무엇이 긍정,부정,중립단어 있지 정의해 준다
+positive_features = [(word_feats(pos), 'pos') for pos in positive_vocab]
+negative_features = [(word_feats(neg), 'neg') for neg in negative_vocab]
+neutral_features = [(word_feats(neu), 'neu') for neu in neutral_vocab]
+
+# 테스트 데이터셋 생성 완료! nave bayes에 학습 시킨다
+train_set = negative_features + positive_features + neutral_features
+classifier = NaiveBayesClassifier.train(train_set)
+
+# 예측하기 위해 데이터셋 준비
+name = "beauty"
+
+neg = 0
+pos = 0
+neu = 0
+df = pd.read_csv("C:/naverstore/final/%s_data.csv"%(name))
+data = df[df['content'].notnull()]
+
+print('총문장수')
+print(len(data))
+
+pos_word = []
+neg_word = []
+neu_word = []
+
+# for문으로 예측하고 싶은 문장을 돌려서 한 문장씩 예측 시킨다
+for sentence in data['content']:
+    sentence = sentence.lower()
+    words = sentence.split(',')
+
+    for word in words:
+        classResult = classifier.classify(word_feats(word))
+        if classResult == 'neg':
+            neg = neg + 1
+            neg_word.append(word)
+        elif classResult == 'pos':
+            pos = pos + 1
+            pos_word.append(word)
+        elif classResult == 'neu' :
+            neu = neu +1
+            neu_word.append(word)
+
+# 결과 출력시키기
+print( '긍정의 문장 수는 ' + str(pos) +'개 입니다')
+print('부정의 문장 수는 ' + str(neg) +'개 입니다')
+print('중립의 문장 수는 ' + str(neu) +'개 입니다')
+
+print('긍정인 반응은 ' + str(float(pos)*100 / (float(pos) + float(neg) + float(neu))) + '% 입니다')
+print('부정인 반응은 ' + str(float(neg)*100 / (float(pos) + float(neg) + float(neu))) + '% 입니다')
+print('중립인 반응은 ' + str(float(neu)*100 / (float(pos) + float(neg) + float(neu))) + '% 입니다')
+
+w_count = {}
+
+for one in neu_word:
+    try: w_count[one] +=1
+    except: w_count[one] = 1
+
+pd_data = pd.DataFrame(list(w_count.items()))
+print(type(pd_data))
+
+pd_data.columns = ['sentence', 'count']
+pd_data = pd_data.sort_values('count', ascending=False)
+
+pd_data.to_csv('%s_neu'%(name), mode = 'w', index = False, encoding='utf-8', index_label= False)
+print('저장 완료')
+
+w_count = {}
+
+for one in neg_word:
+    try: w_count[one] +=1
+    except: w_count[one] = 1
+
+pd_data = pd.DataFrame(list(w_count.items()))
+print(type(pd_data))
+
+pd_data.columns = ['sentence', 'count']
+pd_data = pd_data.sort_values('count', ascending=False)
+
+pd_data.to_csv('%s_neg'%(name), mode = 'w', index = False, encoding='utf-8', index_label= False)
+print('저장 완료')
+
+w_count = {}
+
+for one in pos_word:
+    try: w_count[one] +=1
+    except: w_count[one] = 1
+
+pd_data = pd.DataFrame(list(w_count.items()))
+print(type(pd_data))
+
+pd_data.columns = ['sentence', 'count']
+pd_data = pd_data.sort_values('count', ascending=False)
+
+pd_data.to_csv('%s_pos'%(name), mode = 'w', index = False, encoding='utf-8', index_label= False)
+print('저장 완료')
+
