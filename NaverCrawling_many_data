@@ -100,7 +100,6 @@ def dataHandling(mydatas):
 
 def main():
     url = []
-
     p = re.compile('http://')
     for i in count():
         url.append(str(input('{0}번째 url을 입력하세요 : '.format(i+1))))
@@ -124,7 +123,8 @@ def main():
 
         data.to_csv('data_%s_%s.csv'%(s_name,p_number), mode = 'w', index = True,
                     encoding='utf-8', index_label= False)
-
+        print('저장 완료')
 
 if __name__ == "__main__":
     main()
+
