@@ -1,15 +1,20 @@
-<h1 align="center"> 네이버 스마트 스토어 댓글 분석 프로젝트</h1>
+﻿<h1 align="center"> 네이버 스마트 스토어 구매평을 통한 소비자 반응 분석</h1>
 
 <p align="center"><img src="https://sell.smartstore.naver.com/images/use/ntalk_180201.png" /></p>
 
-<p align="center">중소상공인의 대표 온라인 플랫폼 네이버 스마트 스토어</p>
+<p align="center">중소상공인의 대표 온라인 플랫폼 네이버 스마트 스토어 (사진 출처: 네이버 스마트 스토어)</p>
 
 <p align="center"><a href="http://www.yonhapnews.co.kr/bulletin/2018/03/09/0200000000AKR20180309143000033.HTML?input=1195m" target="_blank">10명 중 9명이 이용중인 온라인 쇼핑의 중심~!</a></p>
 
-## 1. 카테고리 별로 소비자 반응을 분석했어요(총 9개 카테고리)
+## 1. 스마스 스토어 제품 카테고리 별로 소비자 반응을 분석했어요(총 9개 카테고리)
 
 - 명사 추출을 통한 소비자 댓글의 핵심 KEY 도출
 - 긍정/부정/중립의 언어표현 비율 분석 (소비자 감정분석)
+
+![ex_photo](./image/living_good.png)
+
+- 예시) 리빙분야의 "만족" 구매평을 남긴 소비자 반응 워드크라우드 
+
 
 ## 2. 직접 네이버 스토어를 분석해 보세요
 
