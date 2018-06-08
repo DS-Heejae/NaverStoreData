@@ -19,8 +19,8 @@
 
 
 
-![ex_photo](./image/living_good.png)
-- 예시) 리빙분야의 "만족" 구매평을 남긴 소비자 반응 워드 크라우드 
+![ex_photo](./image/fashion_wordcloud.png)
+- 예시) 패션의류 분야의 "만족", "보통", "불만"의 구매평을 워드크라우드로 생성
 
 
 ## 2. 직접 네이버 스토어를 분석해 보세요
