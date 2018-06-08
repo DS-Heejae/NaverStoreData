@@ -19,8 +19,8 @@
 
 
 
-![ex_photo](./image/fashion_wordcloud.png)
-- 예시) 패션의류 분야의 "만족", "보통", "불만"의 구매평을 워드크라우드로 생성
+![ex_photo](./image/fashion_wordcloud.PNG)
+- 예시) 패션의류 분야의 "만족", "보통", "불만"의 구매평을 워드크라우드로 생성한 결과
 
 
 ## 2. 직접 네이버 스토어를 분석해 보세요
