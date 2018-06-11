@@ -43,11 +43,11 @@
 
 ![ex_photo](./image/CommentAnalyzer_Execution_Flow/5.PNG)
 
-- STEP1) URL에 자신의 스마트 스토어 주소를 입력한다
+- STEP 1) URL에 자신의 스마트 스토어 주소를 입력한다
 
 ![ex_photo](./image/CommentAnalyzer_Execution_Flow/6.png)
 
-- STEP)"만족", "보통", "불만" 구매평 별로 어떤 단어가 가장 많이 사용되었는지 확인 한다
+- STEP 2) "만족", "보통", "불만" 구매평 별로 어떤 단어가 가장 많이 사용되었는지 확인한다
 
 
 
