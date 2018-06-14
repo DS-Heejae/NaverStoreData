@@ -1,4 +1,3 @@
-
 from konlpy.tag import Twitter
 import pandas as pd
 import warnings
@@ -34,5 +33,5 @@ with open(wakati_file, 'w', encoding='utf-8') as fp:
 
 data = word2vec.LineSentence(wakati_file)
 model = word2vec.Word2Vec(data, size=200, window=10, hs=1, min_count=2, sg=1)
-model.save("toji.model")
+model.save("c:/pythondata/toji.model")
 print("ok")
