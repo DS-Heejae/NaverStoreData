@@ -90,4 +90,4 @@ ProductsAnalysis_TOP100
 ## 라이센스
 
 ![cc license](http://i.creativecommons.org/l/by/4.0/88x31.png)
-본 프로젝트는 깃허브 NaverStoreData 출처 공개에 한하여 배포 가능합니다.
+본 프로젝트는 깃허브 seoulblanc/NaverStoreData 출처 공개에 한하여 배포 가능합니다.
