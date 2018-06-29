@@ -68,7 +68,7 @@
 프로젝트 최종 파일 : 스마트스토어_소비자반응분석_최종.pptx
 
 
-### 6. 분석에 사용한 python, R 파일 
+## 6. 분석에 사용한 python, R 파일 
 CommentAnalyzer
 - chartGUI.py : GUI 화면 구성
 - crawlingFinal.py : 스마트 스토어 구매평 크롤링
