@@ -67,6 +67,7 @@
 
 프로젝트 최종 파일 : 스마트스토어_소비자반응분석_최종.pptx
 
+<a href="스마트스토어_소비자반응분석_최종.pptx" download>Click to Download</a>
 
 ## 6. 분석에 사용한 python, R 파일 
 CommentAnalyzer
