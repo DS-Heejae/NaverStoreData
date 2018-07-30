@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from wordcloud import WordCloud
 from PIL import Image
 import pandas as pd
