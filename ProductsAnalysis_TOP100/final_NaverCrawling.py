@@ -1,129 +1,128 @@
-import json
+from itertools import count
 import requests
+from bs4 import BeautifulSoup
 import pandas as pd
 import re
-from itertools import count
 
-# 입력받은 URL을 바탕으로 jason 형식의 데이터를 요청한다
-def get_request_url(url_all):
-    try:
-        response = requests.get(url_all)
-        if int(response.status_code) == 200:
-            p = re.compile('premium.json')
-            if bool(p.search(url_all)) == True:
-                print("PremiumComment Url Request Success")
-                return response.text
-            else:
-                print("GeneralComment Url Request Success")
-                return response.text
+def get_request_url(url):
+    try :
+        req = requests.get(url)
+        html = req.text
+        soup = BeautifulSoup(html, 'html.parser')
+        print("URL request Success")
+        return soup
+
     except Exception as e:
-        print(e)
         print("Error for URL")
         return None
 
-# 일반상품평과 프리미엄 상품평으로 나누어서 데이터를 받아온다
-def getComment(s_name, p_number):
-    url01 = 'http://smartstore.naver.com/'
-    url03 = '/products/'
-    url05 = '/purchasereviews/premium.json?sortType=PURCHASE_REVIEW_CREATED&evaluationGrade=&page.page=1&page.size=999'
-    url_all1 = url01 + s_name + url03 + p_number + url05
+def getcomment(i, product_number):
 
-    url01 = 'http://smartstore.naver.com/'
-    url03 = '/products/'
-    url05 = '/purchasereviews/general.json?satisfactionGrade=&page.page=1&page.size=999'
-    url_all2 = url01 + s_name + url03 + p_number + url05
+    url1 = 'http://deal.11st.co.kr/product/SellerProductDetail.tmall?method=getProductReviewList&prdNo='
+    product_number = str(product_number)
+    url3 = '&page='
+    url4 = i
+    url5 = '&pageTypCd=first&reviewDispYn=Y&isPreview=false&reviewOptDispYn=Y&optSearchBtnAndGraphLayer=Y&reviewBottomBtn=Y&openDetailContents=Y&pageSize=100&isIgnoreAuth=false&lctgrNo=1001397&leafCtgrNo=0&groupProductNo=0&groupFirstViewPrdNo=0&selNo=41580890#this'
 
-    plain_text1 = get_request_url(url_all1)
-    plain_text2 = get_request_url(url_all2)
+    url = url1 + product_number + url3 + url4 + url5
+    #print(url)
+    return url
 
-    mydatas = []
-    for i in [plain_text1, plain_text2]:
-        if (i == None):
-            return None
-        else:
-            mydatas.append(json.loads(i))
+def dataHandling(soup,product_number):
+    df_feed_code = []
+    df_review = []
+    df_date = []
+    df_star = []
+    df_product = []
 
-    return mydatas
+    #리뷰 모으기
+    reviews = soup.select(
+    'p.bbs_summary > span.summ_conts > a'
+    )
 
-# jason에서 만족도, 댓글 내용, 댓글 작성 날짜를 불러온다
-def dataHandling(mydatas):
-    p_list_comment = []
+    for review in reviews :
+        review_ = review.text
+        review_clean = review_.replace('\n', '')
+        review_clean = review_clean.replace('\r', '')
+        review_clean = review_clean.replace('\t', '')
+        df_review.append(review_clean)
+        #print(review_clean)
 
-    for comment in mydatas[0]['htReturnValue']['pagedResult']['content']:
-        p_list_comment.append('프리미엄댓글')
-        p_list_comment.append(comment['gradeText'])
-        p_list_comment.append(comment['contentsSummary'])
-        p_list_comment.append(comment['createdDate'])
+    #날짜 모으기
+    dates = soup.select(
+        'span.date'
+    )
 
-    g_list_comment = []
+    for date in dates :
+        date = date.text
+        df_date.append(date)
+        #print(date)
 
-    for comment in mydatas[1]['htReturnValue']['pagedResult']['content']:
-        g_list_comment.append('일반댓글')
-        g_list_comment.append(comment['gradeText'])
-        g_list_comment.append(comment['title'])
-        g_list_comment.append(comment['createdDate'])
+    #평점 모으기
+    stars = soup.select(
+     'div.bbs_top > div.top_l > div > p > span'
+    )
+    for star in stars :
+        star = star.text
+        star_clean = int(re.findall('\d', str(star))[1])
+        df_star.append(star_clean)
+        #print(star_clean)
 
-    result = []
-    _result = []
+    #구매한 상품 모으기
+    products = soup.select(
+        'div.bbs_cont_wrap > div.bbs_cont > p.option_txt'
+    )
+    for product in products :
+        product = product.text
+        df_product.append(product)
+        #print(product)
 
-    for i in [p_list_comment, g_list_comment]:
-        for item in i:
-            _result.append(item)
-            if len(_result) == 4:
-                result.append(_result)
-                _result = []
+    #feed code 부여하기
+    codes = soup.select('p.bbs_summary')
 
-    data = pd.DataFrame(result, columns=('type', 'prefer', 'content', 'date'))
+    for code in codes :
+        code_imsi = code.get('data-contno')
+        #print(code_imsi)
+        code_sum = '11st_' + '%s_'%(product_number) + str(code_imsi)
+        df_feed_code.append(code_sum)
 
-    j = 0
-    p = re.compile('\w+')
-    for item in data['content']:
-        b = item.replace('\n', '')
-        c = p.findall(b)
-        k = ''
-        for i in c:
-            k += ' ' + str(i)
-        data['content'][j] = k
-        j += 1
+    print(len(df_review),len(df_star),len(df_date),len(df_product))
 
-# 프리미엄 댓글과 일반 댓글의 형식을 맞추기 위해서 프리미엄의'적극추천','추천','추천안함'을 리코딩 한다
-    j = 0
-    for i in data['prefer']:
-        if str(i) == '적극추천' or str(i) == '추천':
-            data['prefer'][j] = '만족'
-            j += 1
-        elif str(i) == '추천안함':
-            data['prefer'][j] = '불만'
-            j += 1
+    if len(df_review) ==len(df_star) == len(df_date) == len(df_product) :
+        pass
+    else :
+        return None
 
-    return data
+    # 구매평, 날짜, 평점, 상품을 합하여 하나의 데이터 프레임으로 생성
+    df1 = pd.DataFrame({'feed_code':df_feed_code,'content':df_review, 'date':df_date, 'star':df_star, 'product_select':df_product})
+    df1 = df1[['feed_code','content', 'date', 'star', 'product_select']]
+    return df1
 
-# 입력받은 URL 에서 스토어명과 상품번호를 정규표현식을 통해 추출한다
+
 def main():
-    url = []
-    p = re.compile('http://')
-    for i in count():
-        url.append(str(input('{0}번째 url을 입력하세요 : '.format(i+1))))
+    for j in count():
+        data_result = pd.DataFrame(columns=('feed_code', 'content', 'date', 'star', 'product_select'))
+        url_imsi = []
+        url_imsi = (str(input('{0}번째 url을 입력하세요 : '.format(j + 1))))
+        p = re.compile('prdNo=\d+')
+        product_number = str(p.search(url_imsi).group())
+        product_number = product_number.replace('prdNo=', '')
+        print(product_number)
 
-        # print(bool(p.search(url[i]).group()))
-        if p.search(url[i]) == None:
-            url.remove(url[i])
-            break
+        # 800페이지 까지 크롤링 하겠다는 의미
+        for i in range(1,800):
+            i = str(i)
+            url = getcomment(i, product_number)
+            soup = get_request_url(url)
+            df1 = dataHandling(soup, product_number)
+            data_result = pd.concat([data_result, df1], axis=0)
 
-        _s_name = re.compile('\w+/products/')
-        _p_number = re.compile('/products/\d+')
-
-        s_name = str(_s_name.search(url[i]).group()).replace('/products/','')
-        p_number = str(_p_number.search(url[i]).group()).replace('/products/','')
-        print('스토어팜 이름: ' + s_name + '    /   상품 번호: ' + p_number)
-
-        mydatas = getComment(s_name, p_number)
-
-        data = dataHandling(mydatas)
-
-        data.to_csv('data_%s_%s.csv'%(s_name,p_number), mode = 'w', index = True,
-                    encoding='utf-8', index_label= False)
+        print(data_result)
+        data_result.to_csv('data_11st_%s.csv'%(product_number), mode='w', encoding='utf-8', index=False)
         print('저장 완료')
 
 if __name__ == "__main__":
     main()
+
+# db연결해서 저장하는 부분 수정하기
+
